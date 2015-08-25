@@ -4,17 +4,19 @@ void setup()
 {
   // put your setup code here, to run once:
   
+  Serial.begin(9600);
+  Serial.println("Begin Serial");
+  
   CSKEY = 0x695A;                       // Unlock CS module for register access
-  CSCTL0 = 0;                           // Reset tuning parameters
-                                        // Select ACLK = REFO, SMCLK = MCLK = DCO
-  CSCTL0 = DCORSEL_5;                   // Set DCO to 48MHz (nominal, center of 8-16MHz range)
-
-  CSCTL1 = SELA_2 | SELS_3 | SELM_3;    // Select ACLK = REFO, SMCLK = MCLK = DCO
-  CSKEY = 0;   
+  //CSCTL1 |= (SELA_2 | SELS_3 | SELM_3);
+  CSCTL1 = SELA_2 | SELS_3 | SELM_3;    // Select ACLK = REFO, SMCLK = MCLK = DCO    //this makes Serial screw up
+  CSKEY = 0;                                // Lock CS module from unintended accesses
   
   // Configure UART pins
   P3SEL0 |= BIT2 | BIT3;                  // set 2-UART pin as second function
 
+    __enable_interrupt();
+    NVIC_ISER0 = 1 << ((INT_EUSCIA0 - 16) & 31); // Enable eUSCIA0 interrupt in NVIC module  //how do
 
   // Configure UART
   UCA2CTLW0 |= UCSWRST;            // Put eUSCI in reset
@@ -68,7 +70,8 @@ void setup()
   
 
   UCA2CTLW0 &= ~UCSWRST;                  // Initialize eUSCI
- // UCA2IE |= UCRXIE;                       // Enable USCI_A0 RX interrupt
+  UCA2IE |= UCRXIE;                       // Enable USCI_A2 RX interrupt
+
 
   /*
   __enable_interrupt();
@@ -80,25 +83,60 @@ void setup()
 
 void loop()
 {  
+  /*
+  char data;
+  if(UCA2IFG & UCRXIFG)
+  {
+    data = UCA2RXBUF;
+    
+    Serial.write(data);
+    
+    Serial.println(" | that was some data");
+  }
+  */
+  //UART_A2_SendString("test");
+  //delay(30);
+  
+  Serial.println("test");
+  delay(100);
+  
+  /*loopback*/
   if (UCA2IFG & UCRXIFG) //check if something was recieved
   {
     while(!(UCA2IFG & UCTXIFG));
     UCA2TXBUF = UCA2RXBUF;  //set tx buffer to what was recieved by rx buffer.
     __no_operation();
   } 
+  /**/
+}
+
+void UART_A2_SendChar(char data)
+{
+    UCA2TXBUF = data;             //send
+    while(!(UCA2IFG & UCTXIFG));   //hold until the data is sent
+    __no_operation();
+}
+
+void UART_A2_SendString(char *s)
+{
+  do {
+    UART_A2_SendChar(*s);
+    s++;
+  } while(*s != 0);
+  
+  UART_A2_SendChar('\n');
 }
 
 
-
-/*
 // UART interrupt service routine
-void eUSCIA0IsrHandler(void)
+void eUSCIA2IsrHandler(void)
 {
-    if (UCA0IFG & UCRXIFG)
+    if (UCA0IFG & UCRXIFG)  //if recieved
     {
-      while(!(UCA0IFG&UCTXIFG));
-      UCA0TXBUF = UCA0RXBUF;
-      __no_operation();
+        UCA0IFG &=~ UCRXIFG;            // Clear interrupt
+        RXData = UCA0RXBUF;             // Clear buffer    
+        __no_operation();
     }
 }
-*/
+
+
