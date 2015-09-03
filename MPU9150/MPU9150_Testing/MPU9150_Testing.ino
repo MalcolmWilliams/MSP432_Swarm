@@ -164,6 +164,9 @@ void setup()
 
 void loop()
 {
+  MPU9150_writeSensor(0x24, 0x40);
+  delay(1);
+  /*
   debug1State = !debug1State;
   digitalWrite(DEBUG_PIN_1, debug1State);
   
@@ -171,7 +174,7 @@ void loop()
   data[0] = MPU9150_readSensor(MPU9150_CMPS_XOUT_L,MPU9150_CMPS_XOUT_H);
   data[1] = MPU9150_readSensor(MPU9150_CMPS_YOUT_L,MPU9150_CMPS_YOUT_H);
   data[2] = MPU9150_readSensor(MPU9150_CMPS_ZOUT_L,MPU9150_CMPS_ZOUT_H);
-*/
+*
   data[3] = MPU9150_readSensor(MPU9150_GYRO_XOUT_L,MPU9150_GYRO_XOUT_H);
   data[4] = MPU9150_readSensor(MPU9150_GYRO_YOUT_L,MPU9150_GYRO_YOUT_H);
   data[5] = MPU9150_readSensor(MPU9150_GYRO_ZOUT_L,MPU9150_GYRO_ZOUT_H);
@@ -204,10 +207,11 @@ void loop()
   serialMsg = serialMsg + "\t" + String(millis());
   
   Serial.println(serialMsg);
-  /**/
+  **
   Serial.println(millis());
   
   delay(1);
+  */
 }
 
 //http://pansenti.wordpress.com/2013/03/26/pansentis-invensense-mpu-9150-software-for-arduino-is-now-on-github/

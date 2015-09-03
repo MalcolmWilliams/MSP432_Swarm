@@ -1,0 +1,23 @@
+
+**** Build of configuration Debug for project MSP432_Swarm_CCS ****
+
+"C:\\ti\\ccsv6\\utils\\bin\\gmake" -k all 
+'Building file: ../msp432_startup_ccs.c'
+'Invoking: MSP432 Compiler'
+"C:/ti/ccsv6/tools/compiler/ti-cgt-arm_5.2.2/bin/armcl" -mv7M4 --code_state=16 --float_support=FPv4SPD16 --abi=eabi -me --include_path="C:/ti/ccsv6/ccs_base/arm/include" --include_path="C:/ti/ccsv6/tools/compiler/ti-cgt-arm_5.2.2/include" --include_path="C:/ti/ccsv6/ccs_base/arm/include/CMSIS" --advice:power=all -g --gcc --define=__MSP432P401R__ --define=TARGET_IS_MSP432P4XX --define=ccs --display_error_number --diag_warning=225 --diag_wrap=off --preproc_with_compile --preproc_dependency="msp432_startup_ccs.pp"  "../msp432_startup_ccs.c"
+"../msp432_startup_ccs.c", line 180: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"../msp432_startup_ccs.c", line 192: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"../msp432_startup_ccs.c", line 204: remark #1527-D: (ULP 2.1) Detected SW delay loop using empty loop. Recommend using a timer module instead
+"..\utils.h", line 6: warning #1-D: last line of file ends without a newline
+'Finished building: ../msp432_startup_ccs.c'
+' '
+'Building target: MSP432_Swarm_CCS.out'
+'Invoking: MSP432 Linker'
+"C:/ti/ccsv6/tools/compiler/ti-cgt-arm_5.2.2/bin/armcl" -mv7M4 --code_state=16 --float_support=FPv4SPD16 --abi=eabi -me --advice:power=all -g --gcc --define=__MSP432P401R__ --define=TARGET_IS_MSP432P4XX --define=ccs --display_error_number --diag_warning=225 --diag_wrap=off -z -m"MSP432_Swarm_CCS.map" --heap_size=1024 --stack_size=512 -i"C:/ti/ccsv6/ccs_base/arm/include" -i"C:/ti/ccsv6/tools/compiler/ti-cgt-arm_5.2.2/lib" -i"C:/ti/ccsv6/tools/compiler/ti-cgt-arm_5.2.2/include" --reread_libs --warn_sections --display_error_number --diag_wrap=off --xml_link_info="MSP432_Swarm_CCS_linkInfo.xml" --rom_model -o "MSP432_Swarm_CCS.out" "./main.obj" "./msp432_startup_ccs.obj" "./UART/UART_A0.obj" "./IMU/I2Cdev.obj" "./IMU/MPU6050.obj" "../msp432p401r.cmd"  -l"libc.a" 
+<Linking>
+remark #10371-D: (ULP 1.1) Detected no uses of low power mode state changing instructions
+warning #10247-D: creating output section ".init_array" without a SECTIONS specification
+'Finished building target: MSP432_Swarm_CCS.out'
+' '
+
+**** Build Finished ****

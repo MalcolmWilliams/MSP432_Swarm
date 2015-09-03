@@ -1,0 +1,139 @@
+
+#include "msp.h"
+#include "IMU/I2Cdev.h"
+//#include "IMU/MPU6050_6Axis_MotionApps20.h"
+#include "IMU/MPU6050.h"
+#include <stdio.h>
+#include "UART/UART_A0.h"
+
+
+
+MPU6050 accelgyro;
+I2Cdev i2cdev;
+UART_A0 uartA0;
+
+char debugOutput[50];
+int16_t ax, ay, az;
+int16_t gx, gy, gz;
+
+void init_clk_48();
+void MPU9150_setupCompass();
+
+void eUSCIB0IsrHandler(void);
+
+void main(void)
+{
+    WDTCTL = WDTPW | WDTHOLD;           // Stop watchdog timer
+
+    P6DIR |= BIT0;                          // P6.0 set as output
+    P6OUT &= ~BIT0;
+
+    init_clk_48();
+    __enable_interrupt();
+    NVIC_ISER0 = 1 << ((INT_EUSCIB0 - 16) & 31); // Enable eUSCIB0 interrupt in NVIC module
+
+    i2cdev.writeByte(0x68, 0x6B, 0);	//wake from sleep
+    MPU9150_setupCompass();
+
+    //accelgyro.initialize();
+    //accelgyro.testConnection();
+    //accelgyro.setIntDataReadyEnabled(1);
+
+
+
+    while(1)
+    {
+    	P6OUT |= BIT0;
+        P6OUT &= ~BIT0;
+        int i;
+  	    for (i = 10000; i > 0; i--) {__no_operation();}
+        accelgyro.getMotion6(&ax, &ay, &az, &gx, &gy, &gz);
+
+        //accelgyro.getAccelerationX();
+
+        int n=sprintf(debugOutput, "ax: %d\t ay: %d\t az: %d\t gx: %d\t gy: %d\t gz: %6d\t", ax, ay, az, gx, gy, gz);
+
+        uartA0.sendString(debugOutput);
+        //accelgyro.getIntStatus();
+
+
+    }
+	
+}
+
+void init_clk_48()
+{
+  CSKEY = 0x695A;                        // Unlock CS module for register access
+  CSCTL0 = 0;                            // Reset tuning parameters
+
+  CSCTL0 = DCORSEL_5;                    // Set DCO to 48MHz
+
+  CSCTL1 = SELA_2 | SELS_3 | SELM_3;     // Select ACLK = REFO, SMCLK = MCLK = DCO
+  CSKEY = 0;                             // Lock CS module from unintended accesses
+}
+
+
+
+void MPU9150_setupCompass(){
+/*
+	//UCB0CTLW0 |= UCSWRST;
+    UCB0I2CSA = MAG_I2C_ADDRESS;      //change Adress to Compass
+    //UCB0CTLW0 &= ~UCSWRST;
+
+  i2cdev.writeByte(0x68, 0x0A, 0x00); //PowerDownMode
+  i2cdev.writeByte(0x68, 0x0A, 0x0F); //SelfTest
+  i2cdev.writeByte(0x68, 0x0A, 0x00); //PowerDownMode
+*/
+
+  //UCB0CTLW0 |= UCSWRST;
+  UCB0I2CSA = ACCEL_GYRO_I2C_ADDRESS;      //change Adress to Compass
+  //UCB0CTLW0 &= ~UCSWRST;
+
+
+  i2cdev.writeByte(0x68, 0x24, 0x40); //Wait for Data at Slave0
+  i2cdev.writeByte(0x68, 0x25, 0x8C); //Set i2c address at slave0 at 0x0C
+  i2cdev.writeByte(0x68, 0x26, 0x02); //Set where reading at slave 0 starts
+  i2cdev.writeByte(0x68, 0x27, 0x88); //set offset at start reading and enable
+  i2cdev.writeByte(0x68, 0x28, 0x0C); //set i2c address at slv1 at 0x0C
+  i2cdev.writeByte(0x68, 0x29, 0x0A); //Set where reading at slave 1 starts
+  i2cdev.writeByte(0x68, 0x2A, 0x81); //Enable at set length to 1
+  i2cdev.writeByte(0x68, 0x64, 0x01); //overvride register
+  i2cdev.writeByte(0x68, 0x67, 0x03); //set delay rate
+  i2cdev.writeByte(0x68, 0x01, 0x80);
+
+  i2cdev.writeByte(0x68, 0x34, 0x04); //set i2c slv4 delay
+  i2cdev.writeByte(0x68, 0x64, 0x00); //override register
+  i2cdev.writeByte(0x68, 0x6A, 0x00); //clear usr setting
+  i2cdev.writeByte(0x68, 0x64, 0x01); //override register
+  i2cdev.writeByte(0x68, 0x6A, 0x20); //enable master i2c mode
+  i2cdev.writeByte(0x68, 0x34, 0x13); //disable slv4
+}
+
+
+
+// I2C interrupt service routine
+void eUSCIB0IsrHandler(void)
+{
+
+  P6OUT |= BIT0;
+  P6OUT &= ~ BIT0;
+
+    if (UCB0IFG & UCNACKIFG)
+    {
+        UCB0IFG &= ~ UCNACKIFG;
+        SCB_SCR |= SCB_SCR_SLEEPONEXIT;     // Don't wake up on exit from ISR
+        UCB0CTLW0 |= UCTXSTT;                  // I2C start condition
+    }
+    if (UCB0IFG & UCTXIFG0)
+    {
+    	UCB0IFG &= ~ UCTXIFG0;
+        UCB0TXBUF = accelgyro.txBuf;            // Load TX buffer
+        SCB_SCR &= ~SCB_SCR_SLEEPONEXIT;          // Wake up on exit from ISR
+    }
+    if (UCB0IFG & UCRXIFG0)
+    {
+        UCB0IFG &= ~ UCRXIFG0;
+        accelgyro.rxBuf = UCB0RXBUF;                   // Get RX data
+        SCB_SCR &= ~SCB_SCR_SLEEPONEXIT;      // Wake up on exit from ISR
+    }
+}

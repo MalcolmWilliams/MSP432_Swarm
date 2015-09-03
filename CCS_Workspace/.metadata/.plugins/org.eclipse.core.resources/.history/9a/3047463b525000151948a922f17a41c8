@@ -1,0 +1,96 @@
+/* Intrrupt vector table.  Note that the proper constructs must be placed on this to  */
+/* ensure that it ends up at physical address 0x0000.0000 or at the start of          */
+/* the program if located at a start address other than 0.                            */
+
+
+
+//#ifdef __cplusplus					//so that the code will work with cpp
+//#pragma DATA_SECTION(".intvecs")	//this soft bricks the target...
+//#elif
+#pragma DATA_SECTION(interruptVectors, ".intvecs")
+//#endif
+void (* const interruptVectors[])(void) =
+{
+    (void (*)(void))((unsigned long)&__STACK_END),
+                                            /* The initial stack pointer */
+    resetISR,                               /* The reset handler         */
+    nmiISR,                                 /* The NMI handler           */
+    faultISR,                               /* The hard fault handler    */
+    intDefaultHandler,                      /* The MPU fault handler     */
+    intDefaultHandler,                      /* The bus fault handler     */
+    intDefaultHandler,                      /* The usage fault handler   */
+    0,                                      /* Reserved                  */
+    0,                                      /* Reserved                  */
+    0,                                      /* Reserved                  */
+    0,                                      /* Reserved                  */
+    intDefaultHandler,                      /* SVCall handler            */
+    intDefaultHandler,                      /* Debug monitor handler     */
+    0,                                      /* Reserved                  */
+    intDefaultHandler,                      /* The PendSV handler        */
+    intDefaultHandler,                      /* The SysTick handler       */
+    intDefaultHandler,                      /* PSS ISR                   */
+    intDefaultHandler,                      /* CS ISR                    */
+    intDefaultHandler,                      /* PCM ISR                   */
+    intDefaultHandler,                      /* WDT ISR                   */
+    intDefaultHandler,                      /* FPU ISR                   */
+    intDefaultHandler,                      /* FLCTL ISR                 */
+    intDefaultHandler,                      /* COMP0 ISR                 */
+    intDefaultHandler,                      /* COMP1 ISR                 */
+    intDefaultHandler,                      /* TA0_0 ISR                 */
+    intDefaultHandler,                      /* TA0_N ISR                 */
+    intDefaultHandler,                      /* TA1_0 ISR                 */
+    intDefaultHandler,                      /* TA1_N ISR                 */
+    intDefaultHandler,                      /* TA2_0 ISR                 */
+    intDefaultHandler,                      /* TA2_N ISR                 */
+    intDefaultHandler,                      /* TA3_0 ISR                 */
+    intDefaultHandler,                      /* TA3_N ISR                 */
+    intDefaultHandler,                      /* EUSCIA0 ISR               */
+    intDefaultHandler,                      /* EUSCIA1 ISR               */
+    intDefaultHandler,                      /* EUSCIA2 ISR               */
+    intDefaultHandler,                      /* EUSCIA3 ISR               */
+	eUSCIB0IsrHandler,                      /* EUSCIB0 ISR               */
+    intDefaultHandler,                      /* EUSCIB1 ISR               */
+    intDefaultHandler,                      /* EUSCIB2 ISR               */
+    intDefaultHandler,                      /* EUSCIB3 ISR               */
+    intDefaultHandler,                    	/* ADC14 ISR                 */
+    intDefaultHandler,                      /* T32_INT1 ISR              */
+    intDefaultHandler,                      /* T32_INT2 ISR              */
+    intDefaultHandler,                      /* T32_INTC ISR              */
+    intDefaultHandler,                      /* AES ISR                   */
+    intDefaultHandler,                      /* RTC ISR                   */
+    intDefaultHandler,                      /* DMA_ERR ISR               */
+    intDefaultHandler,                      /* DMA_INT3 ISR              */
+    intDefaultHandler,                      /* DMA_INT2 ISR              */
+    intDefaultHandler,                      /* DMA_INT1 ISR              */
+    intDefaultHandler,                      /* DMA_INT0 ISR              */
+    intDefaultHandler,                        /* PORT1 ISR                 */
+    intDefaultHandler,                      /* PORT2 ISR                 */
+    intDefaultHandler,                      /* PORT3 ISR                 */
+    intDefaultHandler,                      /* PORT4 ISR                 */
+    intDefaultHandler,                      /* PORT5 ISR                 */
+    intDefaultHandler,                      /* PORT6 ISR                 */
+    intDefaultHandler,                      /* Reserved 41               */
+    intDefaultHandler,                      /* Reserved 42               */
+    intDefaultHandler,                      /* Reserved 43               */
+    intDefaultHandler,                      /* Reserved 44               */
+    intDefaultHandler,                      /* Reserved 45               */
+    intDefaultHandler,                      /* Reserved 46               */
+    intDefaultHandler,                      /* Reserved 47               */
+    intDefaultHandler,                      /* Reserved 48               */
+    intDefaultHandler,                      /* Reserved 49               */
+    intDefaultHandler,                      /* Reserved 50               */
+    intDefaultHandler,                      /* Reserved 51               */
+    intDefaultHandler,                      /* Reserved 52               */
+    intDefaultHandler,                      /* Reserved 53               */
+    intDefaultHandler,                      /* Reserved 54               */
+    intDefaultHandler,                      /* Reserved 55               */
+    intDefaultHandler,                      /* Reserved 56               */
+    intDefaultHandler,                      /* Reserved 57               */
+    intDefaultHandler,                      /* Reserved 58               */
+    intDefaultHandler,                      /* Reserved 59               */
+    intDefaultHandler,                      /* Reserved 60               */
+    intDefaultHandler,                      /* Reserved 61               */
+    intDefaultHandler,                      /* Reserved 62               */
+    intDefaultHandler,                      /* Reserved 63               */
+    intDefaultHandler                       /* Reserved 64               */
+};

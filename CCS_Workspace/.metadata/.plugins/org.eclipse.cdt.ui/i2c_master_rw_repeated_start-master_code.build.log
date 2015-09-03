@@ -1,0 +1,16 @@
+
+**** Build of configuration Debug for project i2c_master_rw_repeated_start-master_code ****
+
+"C:\\ti\\ccsv6\\utils\\bin\\gmake" -k all 
+'Building file: ../msp432_startup_ccs.cpp'
+'Invoking: MSP432 Compiler'
+"C:/ti/ccsv6/tools/compiler/ti-cgt-arm_5.2.2/bin/armcl" -mv7M4 --code_state=16 --float_support=FPv4SPD16 --abi=eabi -me --include_path="C:/ti/ccsv6/ccs_base/arm/include" --include_path="C:/ti/ccsv6/tools/compiler/ti-cgt-arm_5.2.2/include" --include_path="C:/ti/ccsv6/ccs_base/arm/include/" --include_path="C:/ti/ccsv6/ccs_base/arm/include/CMSIS" --include_path="C:/ti/ccsv6/tools/compiler/ti-cgt-arm_5.2.2/include/" --include_path="C:/Users/Malcolm/Documents/GitHub/MSP432_Swarm/CCS_Workspace/i2c_master_rw_repeated_start-master_code" --include_path="C:/ti/msp430/MSPWare_2_00_00_41/driverlib/driverlib/MSP432P4xx/" --advice:power=all -g --gcc --define=__MSP432P401R__ --define=TARGET_IS_MSP432P4XX --define=ccs --display_error_number --diag_warning=225 --diag_wrap=off --preproc_with_compile --preproc_dependency="msp432_startup_ccs.pp"  "../msp432_startup_ccs.cpp"
+"../msp432_startup_ccs.cpp", line 41: fatal error #1965: cannot open source file "atan2sp_i.h"
+1 catastrophic error detected in the compilation of "../msp432_startup_ccs.cpp".
+Compilation terminated.
+
+>> Compilation failure
+gmake: *** [msp432_startup_ccs.obj] Error 1
+gmake: Target `all' not remade because of errors.
+
+**** Build Finished ****
